@@ -35,7 +35,7 @@ class OfflineInference:
                    text_ids, prompt_speech_token in
                    zip(text_ids_list, prompt_speech_token_list)]
 
-        outputs = self.model.generate(prompts, self.sampling_params)
+        outputs = self.model.generate(prompt_token_ids=prompts, sampling_params=self.sampling_params)
         results = []
         for output in outputs:
             generated_text = output.outputs[0].text
