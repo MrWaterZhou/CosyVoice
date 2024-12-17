@@ -4,6 +4,7 @@ import os
 import re
 import torch
 import numpy as np
+from transformers import AutoTokenizer
 
 pattern = re.compile(r"<\|speech-(\d+)\|>")
 
@@ -11,6 +12,7 @@ pattern = re.compile(r"<\|speech-(\d+)\|>")
 class OfflineInference:
     def __init__(self, model_path):
         self.bias = torch.load(os.path.join(model_path, 'bias.tensor')).to(torch.bfloat16)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
 
         def process_token(token_ids, logits):
             logits = logits + self.bias
@@ -34,8 +36,9 @@ class OfflineInference:
         prompts = [[151936] + text_ids + [151937] + [x + 151938 for x in prompt_speech_token] for
                    text_ids, prompt_speech_token in
                    zip(text_ids_list, prompt_speech_token_list)]
+        prompts = self.tokenizer.batch_decode(prompts, skip_special_tokens=False)
 
-        outputs = self.model.generate(prompt_token_ids=prompts, sampling_params=self.sampling_params)
+        outputs = self.model.generate(prompts, sampling_params=self.sampling_params)
         results = []
         for output in outputs:
             generated_text = output.outputs[0].text
