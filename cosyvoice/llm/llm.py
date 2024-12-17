@@ -310,6 +310,7 @@ class Qwen2LM(torch.nn.Module):
     ) -> Generator[torch.Tensor, None, None]:
         device = text.device
         text = torch.concat([prompt_text, text], dim=1)
+        print('text:', text)
         text_len += prompt_text_len
         text = self.llm.model.model.embed_tokens(text)
 
@@ -349,6 +350,5 @@ class Qwen2LM(torch.nn.Module):
             yield top_ids
             out_tokens.append(top_ids)
             lm_input = self.speech_embedding.weight[top_ids].reshape(1, 1, -1)
-        print('text:', text)
         print('prompt_speech_token:', prompt_speech_token)
         print('out_tokens:', out_tokens)
