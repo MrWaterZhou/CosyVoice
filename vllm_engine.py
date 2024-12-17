@@ -21,7 +21,7 @@ class OfflineInference:
         stop = ["<|cos_eos|>"]
         tensor_parallel_size = 1
         max_tokens = 4096
-        self.sampling_params = SamplingParams(temperature=0.0, best_of=1, stop=stop,
+        self.sampling_params = SamplingParams(temperature=0.2, best_of=1, stop=stop,
                                               max_tokens=max_tokens, repetition_penalty=1.3, n=1,
                                               logits_processors=[process_token])
         self.model = LLM(model=model_path,
